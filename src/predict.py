@@ -4,7 +4,8 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from skimage import io, img_as_uint
+from skimage import io
+from skimage.util import img_as_uint
 from tqdm import tqdm_notebook, tqdm
 from zipfile import ZipFile
 import torch

@@ -19,9 +19,9 @@ def save_clearance_scores(dataset_directories):
 
     for imset_dir in tqdm(dataset_directories):
 
-        idx_names = np.array([os.path.basename(path)[2:-4] for path in glob.glob(os.path.join(imset_dir, 'QM*.png'))])
+        idx_names = np.array([os.path.basename(path)[2:-4] for path in glob.glob(os.path.join(imset_dir, 'QM*.npy'))])
         idx_names = np.sort(idx_names)
-        lr_maps = np.array([io.imread(os.path.join(imset_dir, f'QM{i}.png')) for i in idx_names], dtype=np.uint16)
+        lr_maps = np.array([np.load(os.path.join(imset_dir, f"QM{i}.npy")) for i in idx_names])
 
         scores = lr_maps.sum(axis=(1, 2))
         np.save(os.path.join(imset_dir, "clearance.npy"), scores)
@@ -38,6 +38,7 @@ def main():
 
 
     prefix = args.prefix
+    print(prefix)
     assert os.path.isdir(prefix)
     if os.path.exists(os.path.join(prefix, "train")):
         train_set_directories = getImageSetDirectories(os.path.join(prefix, "train"))

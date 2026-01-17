@@ -70,6 +70,7 @@ def sample_clearest(clearances, n=None, beta=50, seed=None):
     return i_sample
 
 
+
 def read_imageset(imset_dir, create_patches=False, patch_size=64, seed=None, top_k=None, beta=0.):
     """
     Retrieves all assets from the given directory.
@@ -92,9 +93,12 @@ def read_imageset(imset_dir, create_patches=False, patch_size=64, seed=None, top
     """
 
     # Read asset names
-    idx_names = np.array([basename(path)[2:-4] for path in glob.glob(join(imset_dir, 'QM*.png'))])
+
+    # EDITED
+    # idx_names = np.array([basename(path)[2:-4] for path in glob.glob(join(imset_dir, 'QM*.png'))])
+    idx_names = np.array([basename(path)[2:-4] for path in glob.glob(join(imset_dir, 'QM*.npy'))])
     idx_names = np.sort(idx_names)
-    
+
     clearances = np.zeros(len(idx_names))
     if isfile(join(imset_dir, 'clearance.npy')):
         try:
@@ -115,11 +119,19 @@ def read_imageset(imset_dir, create_patches=False, patch_size=64, seed=None, top
         clearances = clearances[i_clear_sorted]
         idx_names = idx_names[i_clear_sorted]
 
-    lr_images = np.array([io.imread(join(imset_dir, f'LR{i}.png')) for i in idx_names], dtype=np.uint16)
+    # EDITED
+    ## lr_images = np.array([io.imread(join(imset_dir, f'LR{i}.png')) for i in idx_names], dtype=np.uint16)
+    lr_images = np.array([np.load(join(imset_dir, f"LR{i}.npy")) for i in range(len(idx_names))])
 
-    hr_map = np.array(io.imread(join(imset_dir, 'SM.png')), dtype=np.bool)
-    if exists(join(imset_dir, 'HR.png')):
-        hr = np.array(io.imread(join(imset_dir, 'HR.png')), dtype=np.uint16)
+    # EDITED
+    # hr_map = np.array(io.imread(join(imset_dir, 'SM.png')), dtype=np.bool)
+    hr_map = np.load(join(imset_dir, 'SM.npy'))
+
+    # EDITED (png to npy)
+    if exists(join(imset_dir, 'HR.npy')):
+        # EDITED
+        # hr = np.array(io.imread(join(imset_dir, 'HR.png')), dtype=np.uint16)
+        hr = np.load(join(imset_dir, 'HR.npy'))
     else:
         hr = None  # no high-res image in test data
 
@@ -129,8 +141,13 @@ def read_imageset(imset_dir, create_patches=False, patch_size=64, seed=None, top
 
         max_x = lr_images[0].shape[0] - patch_size
         max_y = lr_images[0].shape[1] - patch_size
-        x = np.random.randint(low=0, high=max_x)
-        y = np.random.randint(low=0, high=max_y)
+        x = 0
+        y = 0
+        if max_x > 0:
+            x = np.random.randint(low=0, high=max_x)
+
+        if max_y > 0:
+            y = np.random.randint(low=0, high=max_y)
         lr_images = get_patch(lr_images, x, y, patch_size)  # broadcasting slicing coordinates across all images
         hr_map = get_patch(hr_map, x * 3, y * 3, patch_size * 3)
 
@@ -146,8 +163,6 @@ def read_imageset(imset_dir, create_patches=False, patch_size=64, seed=None, top
                         )
 
     return imageset
-
-
 
 
 class ImagesetDataset(Dataset):

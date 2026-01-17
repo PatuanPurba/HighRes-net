@@ -94,11 +94,13 @@ def lanczos_shift(img, shift, p=3, a=3):
 
     # Apply kernels
 
-    I_s = torch.conv1d(I_padded,
+
+    # UPDATE TEMPORARY: should be I_padded only
+    I_s = torch.conv2d(I_padded,
                        groups=k_y.shape[0],
                        weight=k_y,
                        padding=[k_y.shape[2] // 2, 0])  # same padding
-    I_s = torch.conv1d(I_s,
+    I_s = torch.conv2d(I_s,
                        groups=k_x.shape[0],
                        weight=k_x,
                        padding=[0, k_x.shape[3] // 2])

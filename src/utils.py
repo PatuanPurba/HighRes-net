@@ -8,7 +8,8 @@ import warnings
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import seaborn as sns
-from skimage import transform, img_as_float, exposure
+from skimage import transform, exposure
+from skimage.util import img_as_float
 import torch
 
 
@@ -20,6 +21,7 @@ def readBaselineCPSNR(path):
     Returns:
         scores: dict, of {'imagexxx' (str): score (float)}
     """
+    # path = os.path.join("..", path)
     scores = dict()
     with open(path, 'r') as file:
         reader = csv.reader(file, delimiter=' ')
@@ -36,12 +38,26 @@ def getImageSetDirectories(data_dir):
     Returns:
         imageset_dirs: list of str, imageset directories
     """
-    
     imageset_dirs = []
-    for channel_dir in ['RED', 'NIR']:
+
+    # EDITED
+    # data_dir = os.path.join("..", data_dir)
+    # imageset_dirs = []
+    # for channel_dir in ['RED', 'NIR']:
+    #     path = os.path.join(data_dir, channel_dir)
+    #     for imageset_name in os.listdir(path):
+    #         imageset_dirs.append(os.path.join(path, imageset_name))
+    # return imageset_dirs
+
+
+    for channel_dir in ["band28", "band47"]:
         path = os.path.join(data_dir, channel_dir)
         for imageset_name in os.listdir(path):
             imageset_dirs.append(os.path.join(path, imageset_name))
+
+    # for imageset_name in os.listdir(data_dir):
+    #     imageset_dirs.append(os.path.join(data_dir, imageset_name))
+
     return imageset_dirs
 
 

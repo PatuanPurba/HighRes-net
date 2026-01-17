@@ -152,7 +152,7 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
     regis_model.to(device)
 
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=config['training']['lr_decay'],
-                                               verbose=True, patience=config['training']['lr_step'])
+                                               patience=config['training']['lr_step'])
 
     for epoch in tqdm(range(1, num_epochs + 1)):
 
@@ -300,6 +300,7 @@ if __name__ == '__main__':
     parser.add_argument("--config", help="path of the config file", default='config/config.json')
 
     args = parser.parse_args()
+    print(args.config)
     assert os.path.isfile(args.config)
 
     with open(args.config, "r") as read_file:
