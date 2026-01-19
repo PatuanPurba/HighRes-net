@@ -1,6 +1,7 @@
 {
   "paths": {
-    "prefix": "data/",
+    "prefix": "KSC_Data_3rd/",
+    "prefix_test": "KSC_Data_3rd/",
     "checkpoint_dir": "models/weights",
     "tb_log_file_dir": "tb_logs/"
   },
@@ -30,11 +31,16 @@
         "kernel_size": 1,
         "out_channels": 1
       }
+    },
+    "converter": {
+      "in_channels": 1,
+      "kernel_size": 1,
+      "out_channels": 64
     }
   },
     
   "training": {
-     "num_epochs": 400,
+     "num_epochs": 100,
      "batch_size": 32,
 
      "min_L": 32,
@@ -55,5 +61,4 @@
     "val_proportion": 0.10,
     "lambda": 0.000001
   }
-
 }

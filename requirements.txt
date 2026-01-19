@@ -1,4 +1,3 @@
-tornado==5.1.1
 numpy
 retrying
 requests
@@ -17,8 +16,7 @@ seaborn
 fiona
 tqdm
 
-scikit-learn==0.20.3
-sklearn==0.0
+scikit-learn == 1.7.2
 pytest
 six
 Pillow
@@ -26,6 +24,6 @@ Pillow
 ipdb
 
 plotly
-jupyter_contrib_nbextensions
-jupyter_nbextensions_configurator
+## jupyter_contrib_nbextensions
+## jupyter_nbextensions_configurator
 line_profiler
