@@ -41,7 +41,7 @@
     
   "training": {
      "num_epochs": 100,
-     "batch_size": 32,
+     "batch_size": 16,
 
      "min_L": 32,
      "n_views": 32,
