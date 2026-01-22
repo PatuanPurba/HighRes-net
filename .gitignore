@@ -5,6 +5,7 @@ src.egg-info/
 .ipynb_checkpoints
 .idea
 venv
+venv311
 
 models/weights/
 *.pth

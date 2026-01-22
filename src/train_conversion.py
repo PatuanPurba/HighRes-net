@@ -155,6 +155,7 @@ def trainAndGetBestModel(convertor, fusion_model:nn.modules, regis_model, optimi
 
     fusion_model.to(device)
     regis_model.to(device)
+    convertor.to(device)
 
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=config['training']['lr_decay'],
                                                patience=config['training']['lr_step'])
