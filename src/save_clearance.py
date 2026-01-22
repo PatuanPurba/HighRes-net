@@ -9,7 +9,7 @@ import argparse
 from tqdm import tqdm
 from utils import getImageSetDirectories
 
-from src.cloud_utils import load_zip
+from cloud_utils import load_zip
 
 
 def save_clearance_scores(dataset_directories):
