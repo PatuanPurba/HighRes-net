@@ -1,7 +1,7 @@
 {
   "paths": {
-    "prefix": "KSC_Data_3rd/",
-    "prefix_test": "KSC_Data_3rd/",
+    "prefix": "KSC_Data_2nd/",
+    "prefix_test": "KSC_Data_2nd/",
     "checkpoint_dir": "models/weights",
     "tb_log_file_dir": "tb_logs/"
   },

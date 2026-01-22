@@ -21,6 +21,8 @@ from DataLoader import ImagesetDataset
 from Evaluator import shift_cPSNR
 from utils import getImageSetDirectories, readBaselineCPSNR, collateFunction
 from tensorboardX import SummaryWriter
+from cloud_utils import load_zip, backup_model
+from src.cloud_utils import migrate_instance_cloud
 
 
 def register_batch(shiftNet, lrs, reference):
@@ -223,6 +225,7 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
                        os.path.join(checkpoint_dir_run, 'ShiftNet.pth'))
             best_score = val_score
 
+
         writer.add_image('SR Image', (srs[0] - np.min(srs[0])) / np.max(srs[0]), epoch, dataformats='HW')
         error_map = hrs[0] - srs[0]
         writer.add_image('Error Map', error_map, epoch, dataformats='HW')
@@ -298,12 +301,32 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="path of the config file", default='config/config.json')
+    parser.add_argument("--cloud_GPU", help="GPU to use", default=0, type=int)
+    parser.add_argument("--InstanceID", help="Instance ID", default="", type=str)
+    parser.add_argument("--Connection", help="Connection", default="", type=str)
 
     args = parser.parse_args()
-    print(args.config)
     assert os.path.isfile(args.config)
+
+    if args.cloud_GPU:
+        load_zip("KSC_Data_2nd", ".")
 
     with open(args.config, "r") as read_file:
         config = json.load(read_file)
 
     main(config)
+
+    # VAST CLOUD Part
+    num_epochs = config["training"]["num_epochs"]
+    batch_size = config["training"]["batch_size"]
+    n_views = config["training"]["n_views"]
+    min_L = config["training"]["min_L"]  # minimum number of views
+    beta = config["training"]["beta"]
+    subfolder_pattern = 'batch_{}_views_{}_min_{}_beta_{}_time_{}'.format(
+        batch_size, n_views, min_L, beta, f"{datetime.datetime.now():%Y-%m-%d-%H-%M-%S-%f}")
+    backup_model(config["paths"]["checkpoint_dir"], subfolder_pattern)
+
+    migrate_instance_cloud(os.path.join(config["paths"]["checkpoint_dir"], subfolder_pattern), instance=args.InstanceID, connection=args.Connection)
+
+
+
