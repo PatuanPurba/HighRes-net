@@ -308,8 +308,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     assert os.path.isfile(args.config)
 
-    if args.cloud_GPU:
-        load_zip("KSC_Data_2nd", ".")
 
     with open(args.config, "r") as read_file:
         config = json.load(read_file)
@@ -317,16 +315,17 @@ if __name__ == '__main__':
     main(config)
 
     # VAST CLOUD Part
-    num_epochs = config["training"]["num_epochs"]
-    batch_size = config["training"]["batch_size"]
-    n_views = config["training"]["n_views"]
-    min_L = config["training"]["min_L"]  # minimum number of views
-    beta = config["training"]["beta"]
-    subfolder_pattern = 'batch_{}_views_{}_min_{}_beta_{}_time_{}'.format(
-        batch_size, n_views, min_L, beta, f"{datetime.datetime.now():%Y-%m-%d-%H-%M-%S-%f}")
-    backup_model(config["paths"]["checkpoint_dir"], subfolder_pattern)
+    if args.cloud_GPU:
+        num_epochs = config["training"]["num_epochs"]
+        batch_size = config["training"]["batch_size"]
+        n_views = config["training"]["n_views"]
+        min_L = config["training"]["min_L"]  # minimum number of views
+        beta = config["training"]["beta"]
+        subfolder_pattern = 'batch_{}_views_{}_min_{}_beta_{}_time_{}'.format(
+            batch_size, n_views, min_L, beta, f"{datetime.datetime.now():%Y-%m-%d-%H-%M-%S-%f}")
+        backup_model(config["paths"]["checkpoint_dir"], subfolder_pattern)
 
-    migrate_instance_cloud(os.path.join(config["paths"]["checkpoint_dir"], subfolder_pattern), instance=args.InstanceID, connection=args.Connection)
+        migrate_instance_cloud(os.path.join(config["paths"]["checkpoint_dir"], subfolder_pattern), instance=args.InstanceID, connection=args.Connection)
 
 
 

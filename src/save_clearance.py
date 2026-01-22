@@ -9,6 +9,8 @@ import argparse
 from tqdm import tqdm
 from utils import getImageSetDirectories
 
+from src.cloud_utils import load_zip
+
 
 def save_clearance_scores(dataset_directories):
     '''
@@ -34,11 +36,16 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--prefix", help="root dir of the dataset", default='data/')
+    parser.add_argument("--cloud_GPU", help="whether to use cloud GPU", default=0)
     args = parser.parse_args()
 
 
     prefix = args.prefix
     print(prefix)
+
+    if args.cloud_GPU:
+        load_zip("KSC_Data_2nd", ".")
+
     assert os.path.isdir(prefix)
     if os.path.exists(os.path.join(prefix, "train")):
         train_set_directories = getImageSetDirectories(os.path.join(prefix, "train"))
