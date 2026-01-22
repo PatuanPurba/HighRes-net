@@ -21,8 +21,7 @@ from DataLoader import ImagesetDataset
 from Evaluator import shift_cPSNR
 from utils import getImageSetDirectories, readBaselineCPSNR, collateFunction
 from tensorboardX import SummaryWriter
-from cloud_utils import load_zip, backup_model
-from src.cloud_utils import migrate_instance_cloud
+from cloud_utils import load_zip, backup_model, migrate_instance_cloud
 
 
 def register_batch(shiftNet, lrs, reference):
