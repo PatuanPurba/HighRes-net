@@ -6,6 +6,8 @@ src.egg-info/
 .idea
 venv
 venv311
+.venv311
+
 
 models/weights/
 *.pth
