@@ -40,11 +40,11 @@
   },
     
   "training": {
-     "num_epochs": 5,
-     "batch_size": 16,
+     "num_epochs": 100,
+     "batch_size": 32,
 
-     "min_L": 32,
-     "n_views": 32,
+     "min_L": 16,
+     "n_views": 16,
      "n_workers": 4,
      "crop": 3,
 
