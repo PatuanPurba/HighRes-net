@@ -107,7 +107,7 @@ def get_crop_mask(patch_size, crop_size):
     return torch_mask
 
 
-def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, baseline_cpsnrs, config):
+def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, baseline_cpsnrs, config, cloud_GPU, InstanceID, Connection):
     """
     Trains HRNet and ShiftNet for Multi-Frame Super Resolution (MFSR), and saves best model.
     Args:
@@ -224,6 +224,12 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
                        os.path.join(checkpoint_dir_run, 'ShiftNet.pth'))
             best_score = val_score
 
+            if cloud_GPU:
+                backup_model(config["paths"]["checkpoint_dir"], subfolder_pattern)
+
+                migrate_instance_cloud(os.path.join(config["paths"]["checkpoint_dir"], subfolder_pattern),
+                                       instance=InstanceID, connection=Connection)
+
 
         writer.add_image('SR Image', (srs[0] - np.min(srs[0])) / np.max(srs[0]), epoch, dataformats='HW')
         error_map = hrs[0] - srs[0]
@@ -234,7 +240,7 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
     writer.close()
 
 
-def main(config):
+def main(config, cloud_GPU, InstanceID, Connetion):
     """
     Given a configuration, trains HRNet and ShiftNet for Multi-Frame Super Resolution (MFSR), and saves best model.
     Args:
@@ -293,7 +299,7 @@ def main(config):
     # Train model
     torch.cuda.empty_cache()
 
-    trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, baseline_cpsnrs, config)
+    trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, baseline_cpsnrs, config, cloud_GPU, InstanceID, Connetion)
 
 
 if __name__ == '__main__':
@@ -311,20 +317,10 @@ if __name__ == '__main__':
     with open(args.config, "r") as read_file:
         config = json.load(read_file)
 
-    main(config)
+    main(config, args.cloud_GPU, args.InstanceID, args.Connection)
 
-    # VAST CLOUD Part
-    if args.cloud_GPU:
-        num_epochs = config["training"]["num_epochs"]
-        batch_size = config["training"]["batch_size"]
-        n_views = config["training"]["n_views"]
-        min_L = config["training"]["min_L"]  # minimum number of views
-        beta = config["training"]["beta"]
-        subfolder_pattern = 'batch_{}_views_{}_min_{}_beta_{}_time_{}'.format(
-            batch_size, n_views, min_L, beta, f"{datetime.datetime.now():%Y-%m-%d-%H-%M-%S-%f}")
-        backup_model(config["paths"]["checkpoint_dir"], subfolder_pattern)
 
-        migrate_instance_cloud(os.path.join(config["paths"]["checkpoint_dir"], subfolder_pattern), instance=args.InstanceID, connection=args.Connection)
+
 
 
 
