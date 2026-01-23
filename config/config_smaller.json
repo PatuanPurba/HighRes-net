@@ -1,7 +1,7 @@
 {
   "paths": {
-    "prefix": "KSC_Data_2nd/",
-    "prefix_test": "KSC_Data_2nd/",
+    "prefix": "Indian_Salinas_Data/",
+    "prefix_test": "Indian_Salinas_Data/",
     "checkpoint_dir": "models/weights",
     "tb_log_file_dir": "tb_logs/"
   },

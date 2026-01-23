@@ -3,8 +3,10 @@ retrying
 requests
 scikit-image
 scipy
-torch
-torchvision
+
+# Uncomment if in local, comment if you use docker that already contain torch
+# torch
+# torchvision
 tensorflow
 tensorboardX
 matplotlib
