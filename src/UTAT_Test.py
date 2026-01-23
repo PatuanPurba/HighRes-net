@@ -96,7 +96,7 @@ if __name__ == "__main__":
     #                                        "FULL_KSC_batch_32_views_16_min_16_beta_50.0_time_2026-01-22-07-26-05-149318",
     #                                        "fusion_model_best.pth"),  weights_only=True))
 
-    data_directory = config["paths"]["prefix_test"]
+    data_directory = args.prefix
     test_list = getImageSetDirectories(os.path.join(data_directory, "test"))
     test_dataset = ImagesetDataset(imset_dir=test_list, config=config["training"],
                                     top_k=32, beta=50)
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
         print(f"PSNR{i}: ", psnr(minmax_01(srs), minmax_01(hrs)))
 
-        if i == 10:
+        if i %50 == 0:
             directory_path = Path("Results/FULL_KSC")
             if not directory_path.exists():
                 directory_path.mkdir(parents=True, exist_ok=True)
@@ -135,7 +135,6 @@ if __name__ == "__main__":
             np.save("Results/FULL_KSC/HR.npy", hrs.cpu().detach().numpy()[0])
             np.save("Results/FULL_KSC/SR.npy", srs.cpu().detach().numpy()[0])
             np.save("Results/FULL_KSC/LR0.npy", lrs.cpu().detach().numpy()[0])
-            np.save("Results/FULL_KSC/LR1py", lrs.cpu().detach().numpy()[1])
 
 
         # compute ESA score
