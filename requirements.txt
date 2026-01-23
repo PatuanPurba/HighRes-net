@@ -4,9 +4,9 @@ requests
 scikit-image
 scipy
 
-# Uncomment if in local, comment if you use docker that already contain torch
-# torch
-# torchvision
+
+torch
+torchvision
 tensorflow
 tensorboardX
 matplotlib
