@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="path of the config file", default='config/config.json')
-    parser.add_argument("--prefix", help="Dataset", type=float, default="Indian_Salinas_Data")
+    parser.add_argument("--prefix", help="Dataset", type=str, default="Indian_Salinas_Data")
     args = parser.parse_args()
 
     with open(args.config, "r", encoding="utf-8") as f:
