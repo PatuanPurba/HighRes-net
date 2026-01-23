@@ -48,7 +48,7 @@ class ShiftNet(nn.Module):
                                     nn.BatchNorm2d(128),
                                     nn.ReLU())
         self.drop1 = nn.Dropout(p=0.5)
-        self.fc1 = nn.Linear(128 * 16 * 16, 1024)
+        self.fc1 = nn.Linear(128 * 6 * 6, 1024)
         self.activ1 = nn.ReLU()
         self.fc2 = nn.Linear(1024, 2, bias=False)
         self.fc2.weight.data.zero_() # init the weights with the identity transformation
@@ -74,7 +74,7 @@ class ShiftNet(nn.Module):
         out = self.layer7(out)
         out = self.layer8(out)
 
-        out = out.view(-1, 128 * 16 * 16)
+        out = out.view(-1, 128 * 6 * 6)
         out = self.drop1(out)  # dropout on spatial tensor (C*W*H)
 
         out = self.fc1(out)

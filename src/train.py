@@ -144,7 +144,7 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
     best_score = 100
 
     P = config["training"]["patch_size"]
-    offset = (3 * config["training"]["patch_size"] - 128) // 2
+    offset = (3 * config["training"]["patch_size"] - 50) // 2
     C = config["training"]["crop"]
     torch_mask = get_crop_mask(patch_size=P, crop_size=C)
     torch_mask = torch_mask.to(device)  # crop borders (loss)
@@ -176,8 +176,8 @@ def trainAndGetBestModel(fusion_model, regis_model, optimizer, dataloaders, base
 
             # Register batch wrt HR
             shifts = register_batch(regis_model,
-                                    srs[:, :, offset:(offset + 128), offset:(offset + 128)],
-                                    reference=hrs[:, offset:(offset + 128), offset:(offset + 128)].view(-1, 1, 128, 128))
+                                    srs[:, :, offset:(offset + 50), offset:(offset + 50)],
+                                    reference=hrs[:, offset:(offset + 50), offset:(offset + 50)].view(-1, 1, 50, 50))
             srs_shifted = apply_shifts(regis_model, srs, shifts, device)[:, 0]
 
             # Training loss
