@@ -44,7 +44,7 @@ def main():
     print(prefix)
 
     if args.cloud_GPU:
-        load_zip("KSC_Data_2nd.zip", ".")
+        load_zip(f"{args.prefix}.zip", ".")
 
     assert os.path.isdir(prefix)
     if os.path.exists(os.path.join(prefix, "train")):
