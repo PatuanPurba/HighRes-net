@@ -1,3 +1,4 @@
+import argparse
 from os.path import join
 
 import numpy as np
@@ -77,10 +78,18 @@ def minmax_01(x, eps=1e-8):
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    with open("config/config.json", "r", encoding="utf-8") as f:
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="path of the config file", default='config/config.json')
+    parser.add_argument("--prefix", help="Dataset", type=float, default="Indian_Salinas_Data")
+    args = parser.parse_args()
+
+    with open(args.config, "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    fusion_model = load_model(config, join(config["paths"]["checkpoint_dir"], "FULL_KSC_batch_32_views_16_min_16_beta_50.0_time_2026-01-22-07-26-05-149318", "HRNet.pth"))
+    last_model_name = os.listdir(config["paths"]["checkpoint_dir"])[-1]
+
+    fusion_model = load_model(config, join(config["paths"]["checkpoint_dir"], last_model_name, "HRNet.pth"))
 
     # convertor = HRNet_New.ConvertorNoPool(config["network"])
     # convertor.load_state_dict(torch.load(join("../", config["paths"]["checkpoint_dir"],
