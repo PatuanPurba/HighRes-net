@@ -38,7 +38,7 @@
       "out_channels": 64
     }
   },
-    
+
   "training": {
      "num_epochs": 100,
      "batch_size": 32,
@@ -57,7 +57,7 @@
      "beta": 50.0,
 
     "create_patches": true,
-    "patch_size":64,
+    "patch_size":25,
     "val_proportion": 0.10,
     "lambda": 0.000001
   }

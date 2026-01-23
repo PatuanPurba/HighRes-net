@@ -1,9 +1,10 @@
 from os.path import join
 
+import numpy as np
 from torch._C import device
 
 from DeepNetworks import HRNet, HRNet_New, ShiftNet
-from src.DataLoader import ImagesetDataset
+from DataLoader import ImagesetDataset
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 import json
@@ -12,6 +13,7 @@ import os
 import torch
 from  Evaluator import cPSNR
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+from pathlib import Path
 
 
 def load_data(config_file_path, val_proportion=0.10, top_k=-1):
@@ -75,17 +77,17 @@ def minmax_01(x, eps=1e-8):
 
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    with open("../config/config.json", "r", encoding="utf-8") as f:
+    with open("config/config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    fusion_model = load_model(config, join("../", config["paths"]["checkpoint_dir"], "batch_32_views_32_min_32_beta_50.0_time_2026-01-14-09-26-30-992403", "HRNet.pth"))
+    fusion_model = load_model(config, join(config["paths"]["checkpoint_dir"], "FULL_KSC_batch_32_views_16_min_16_beta_50.0_time_2026-01-22-07-26-05-149318", "HRNet.pth"))
 
-    convertor = HRNet_New.ConvertorNoPool(config["network"])
-    convertor.load_state_dict(torch.load(join("../", config["paths"]["checkpoint_dir"],
-                                           "batch_32_views_32_min_32_beta_50.0_time_2026-01-14-09-26-30-992403",
-                                           "fusion_model_best.pth"),  weights_only=True))
+    # convertor = HRNet_New.ConvertorNoPool(config["network"])
+    # convertor.load_state_dict(torch.load(join("../", config["paths"]["checkpoint_dir"],
+    #                                        "FULL_KSC_batch_32_views_16_min_16_beta_50.0_time_2026-01-22-07-26-05-149318",
+    #                                        "fusion_model_best.pth"),  weights_only=True))
 
-    data_directory = join("../", config["paths"]["prefix_test"])
+    data_directory = config["paths"]["prefix_test"]
     test_list = getImageSetDirectories(os.path.join(data_directory, "test"))
     test_dataset = ImagesetDataset(imset_dir=test_list, config=config["training"],
                                     top_k=32, beta=50)
@@ -96,21 +98,37 @@ if __name__ == "__main__":
                                 pin_memory=True)
 
     i = 0
-    convertor.eval()
+    # convertor.eval()
     fusion_model.eval()
 
+    print("Before")
     for lrs, alphas, hrs, hr_maps, names in test_dataloader:
+        print("Test")
         lrs = lrs.float().to(device)
         alphas = alphas.float().to(device)
         hr_maps = hr_maps.numpy()
+        hrs = hrs.float().to(device)
 
-        lrs = convertor(lrs)
-        hrs = convertor(hrs)
+        # lrs = convertor(lrs)
+        # hrs = convertor(hrs)
 
-        srs = fusion_model(lrs, alphas)[:, 0]  # fuse multi frames (B, 1, 3*W, 3*H)
-        psnr = PeakSignalNoiseRatio(data_range=1)
+        srs = fusion_model(lrs, alphas)[:, 0]
+        srs = srs.to(device)# fuse multi frames (B, 1, 3*W, 3*H)
+        psnr = PeakSignalNoiseRatio(data_range=1).to(device)
 
         print(f"PSNR{i}: ", psnr(minmax_01(srs), minmax_01(hrs)))
+
+        if i == 10:
+            directory_path = Path("Results/FULL_KSC")
+            if not directory_path.exists():
+                directory_path.mkdir(parents=True, exist_ok=True)
+
+            np.save("Results/FULL_KSC/HR.npy", hrs.cpu().detach().numpy()[0])
+            np.save("Results/FULL_KSC/SR.npy", srs.cpu().detach().numpy()[0])
+            np.save("Results/FULL_KSC/LR0.npy", lrs.cpu().detach().numpy()[0])
+            np.save("Results/FULL_KSC/LR1py", lrs.cpu().detach().numpy()[1])
+
+
         # compute ESA score
         i += 1
         srs = srs.detach().cpu().numpy()

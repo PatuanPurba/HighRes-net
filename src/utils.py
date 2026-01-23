@@ -50,7 +50,7 @@ def getImageSetDirectories(data_dir):
     # return imageset_dirs
 
 
-    for channel_dir in ["band28", "band47"]:
+    for channel_dir in os.listdir(data_dir):
         path = os.path.join(data_dir, channel_dir)
         for imageset_name in os.listdir(path):
             imageset_dirs.append(os.path.join(path, imageset_name))
